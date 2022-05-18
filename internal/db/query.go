@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"ldap/internal/config"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -18,9 +19,14 @@ type dbUser struct {
 }
 
 func CheckUser(full_name, account, sid, email string, status int32) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println(err)
+		}
+	}()
+
 	db, err := sql.Open("mysql", config.MysqlHost)
 	if err != nil {
-		fmt.Println(err)
 		panic(err)
 	}
 	defer db.Close()

@@ -15,11 +15,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer l.Close()
 
 	err = l.Bind(config.User, config.Pass)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
+		l.Close()
 	}
 
 	searchReq := ldap.NewSearchRequest(
@@ -36,6 +38,7 @@ func main() {
 	result, err := l.Search(searchReq)
 	if err != nil {
 		log.Fatal(err)
+		l.Close()
 	}
 
 	maxGoroutines := 10 //иначе слишком много одновременных соединений
